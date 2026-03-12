@@ -53,3 +53,4 @@ C:\Respaldo\Chapter\registroinstrumentos\RegistroInstrumentos\obj\Debug\net8.0-w
 C:\Respaldo\Chapter\registroinstrumentos\RegistroInstrumentos\obj\Debug\net8.0-windows\RegistroInstrumentos.pdb
 C:\Respaldo\Chapter\registroinstrumentos\RegistroInstrumentos\obj\Debug\net8.0-windows\RegistroInstrumentos.genruntimeconfig.cache
 C:\Respaldo\Chapter\registroinstrumentos\RegistroInstrumentos\obj\Debug\net8.0-windows\ref\RegistroInstrumentos.dll
+C:\Respaldo\Chapter\registroinstrumentos\RegistroInstrumentos\obj\Debug\net8.0-windows\RegistroInstrumentos.sourcelink.json

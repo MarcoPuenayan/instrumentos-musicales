@@ -121,8 +121,8 @@ public class MainForm : Form
         }
         var frm = factory();
         frm.MdiParent = this;
-        frm.WindowState = FormWindowState.Maximized;
         frm.Show();
+        frm.WindowState = FormWindowState.Maximized;
     }
 
     private void MnuPersonas_Click(object? s, EventArgs e) =>

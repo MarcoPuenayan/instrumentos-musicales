@@ -27,11 +27,86 @@ public class AsignacionInstrumentoForm : Form
     private void InicializarComponentes()
     {
         Text = "Asignacion de Instrumentos a Personas";
-        Size = new Size(1150, 680);
+        Size = new Size(950, 780);
+        MinimumSize = new Size(750, 620);
         BackColor = Color.FromArgb(240, 244, 248);
 
-        var pnlLista = new Panel { Dock = DockStyle.Left, Width = 660, Padding = new Padding(10) };
-        Controls.Add(pnlLista);
+        // SplitContainer: Panel1=form (top), Panel2=list (bottom)
+        var split = new SplitContainer
+        {
+            Dock = DockStyle.Fill, Orientation = Orientation.Horizontal,
+            SplitterDistance = 400, SplitterWidth = 4,
+            Panel1MinSize = 200, Panel2MinSize = 150,
+            BackColor = Color.FromArgb(200, 215, 230)
+        };
+        Controls.Add(split);
+        var pnlDetalle = split.Panel1;
+        pnlDetalle.Padding = new Padding(15);
+
+        pnlDetalle.Controls.Add(new Label
+        {
+            Text = "Nueva Asignacion", Font = new Font("Segoe UI", 13, FontStyle.Bold),
+            Dock = DockStyle.Top, Height = 40, ForeColor = Color.FromArgb(30, 80, 120)
+        });
+
+        var layout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 5,
+            Padding = new Padding(0, 5, 0, 0)
+        };
+        for (int i = 0; i < 5; i++) layout.RowStyles.Add(new RowStyle(SizeType.Percent, 20));
+
+        var flowInst = CrearPanel(layout, "Instrumento Disponible:", 0);
+        cmbInstrumento = new ComboBox { Font = new Font("Segoe UI", 10), DropDownStyle = ComboBoxStyle.DropDownList, Width = 400 };
+        flowInst.Controls.Add(cmbInstrumento);
+        flowInst.SizeChanged += (_, _) => { int w = flowInst.ClientSize.Width - 10; if (w > 0) cmbInstrumento.Width = w; };
+
+        var flowPer = CrearPanel(layout, "Asignar a Persona:", 1);
+        cmbPersona = new ComboBox { Font = new Font("Segoe UI", 10), DropDownStyle = ComboBoxStyle.DropDownList, Width = 400 };
+        flowPer.Controls.Add(cmbPersona);
+        flowPer.SizeChanged += (_, _) => { int w = flowPer.ClientSize.Width - 10; if (w > 0) cmbPersona.Width = w; };
+
+        var flowFecha = CrearPanel(layout, "Fecha de Asignacion:", 2);
+        dtpFecha = new DateTimePicker { Font = new Font("Segoe UI", 10), Format = DateTimePickerFormat.Short, Width = 400 };
+        flowFecha.Controls.Add(dtpFecha);
+        flowFecha.SizeChanged += (_, _) => { int w = flowFecha.ClientSize.Width - 10; if (w > 0) dtpFecha.Width = w; };
+
+        var flowObs = CrearPanel(layout, "Observaciones:", 3);
+        txtObservaciones = new TextBox { Font = new Font("Segoe UI", 10), Multiline = true, Width = 400 };
+        flowObs.Controls.Add(txtObservaciones);
+        flowObs.SizeChanged += (_, _) => { int w = flowObs.ClientSize.Width - 10; if (w > 0) txtObservaciones.Width = w; };
+
+        var pnlBts = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Bottom, Height = 55,
+            FlowDirection = FlowDirection.RightToLeft, Padding = new Padding(5)
+        };
+        btnDevolver = new Button
+        {
+            Text = "Registrar Devolucion", Width = 175, Height = 38,
+            BackColor = Color.FromArgb(180, 100, 20), ForeColor = Color.White,
+            FlatStyle = FlatStyle.Flat, Enabled = false, Font = new Font("Segoe UI", 9, FontStyle.Bold)
+        };
+        btnDevolver.FlatAppearance.BorderSize = 0;
+        btnDevolver.Click += BtnDevolver_Click;
+
+        btnAsignar = new Button
+        {
+            Text = "Registrar Asignacion", Width = 175, Height = 38,
+            BackColor = Color.FromArgb(30, 80, 120), ForeColor = Color.White,
+            FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 9, FontStyle.Bold)
+        };
+        btnAsignar.FlatAppearance.BorderSize = 0;
+        btnAsignar.Click += BtnAsignar_Click;
+
+        pnlBts.Controls.AddRange(new Control[] { btnDevolver, btnAsignar });
+        pnlDetalle.Controls.Add(pnlBts);
+        pnlDetalle.Controls.Add(layout);
+
+        // ── Panel inferior (lista) ───────────────────────────────────────────
+        var pnlLista = split.Panel2;
+        pnlLista.Padding = new Padding(10);
+
         pnlLista.Controls.Add(new Label
         {
             Text = "Historial de Asignaciones", Font = new Font("Segoe UI", 14, FontStyle.Bold),
@@ -62,79 +137,25 @@ public class AsignacionInstrumentoForm : Form
         dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = "Estado", HeaderText = "Estado", FillWeight = 15 });
         pnlLista.Controls.Add(dgv);
 
-        Controls.Add(new Panel { Dock = DockStyle.Left, Width = 4, BackColor = Color.FromArgb(200, 215, 230) });
-
-        var pnlDetalle = new Panel { Dock = DockStyle.Fill, Padding = new Padding(15) };
-        Controls.Add(pnlDetalle);
-        pnlDetalle.Controls.Add(new Label
-        {
-            Text = "Nueva Asignacion", Font = new Font("Segoe UI", 13, FontStyle.Bold),
-            Dock = DockStyle.Top, Height = 40, ForeColor = Color.FromArgb(30, 80, 120)
-        });
-
-        var layout = new TableLayoutPanel
-        {
-            Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 5,
-            Padding = new Padding(0, 5, 0, 0)
-        };
-        for (int i = 0; i < 5; i++) layout.RowStyles.Add(new RowStyle(SizeType.Percent, 20));
-
-        var pnlInst = CrearPanel(layout, "Instrumento Disponible:", 0);
-        cmbInstrumento = new ComboBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10), DropDownStyle = ComboBoxStyle.DropDownList };
-        pnlInst.Controls.Add(cmbInstrumento);
-
-        var pnlPer = CrearPanel(layout, "Asignar a Persona:", 1);
-        cmbPersona = new ComboBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10), DropDownStyle = ComboBoxStyle.DropDownList };
-        pnlPer.Controls.Add(cmbPersona);
-
-        var pnlFecha = CrearPanel(layout, "Fecha de Asignacion:", 2);
-        dtpFecha = new DateTimePicker { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10), Format = DateTimePickerFormat.Short };
-        pnlFecha.Controls.Add(dtpFecha);
-
-        var pnlObs = CrearPanel(layout, "Observaciones:", 3);
-        txtObservaciones = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10), Multiline = true };
-        pnlObs.Controls.Add(txtObservaciones);
-
-        var pnlBts = new FlowLayoutPanel
-        {
-            Dock = DockStyle.Bottom, Height = 55,
-            FlowDirection = FlowDirection.RightToLeft, Padding = new Padding(5)
-        };
-        btnDevolver = new Button
-        {
-            Text = "Registrar Devolucion", Width = 175, Height = 38,
-            BackColor = Color.FromArgb(180, 100, 20), ForeColor = Color.White,
-            FlatStyle = FlatStyle.Flat, Enabled = false, Font = new Font("Segoe UI", 9, FontStyle.Bold)
-        };
-        btnDevolver.FlatAppearance.BorderSize = 0;
-        btnDevolver.Click += BtnDevolver_Click;
-
-        btnAsignar = new Button
-        {
-            Text = "Registrar Asignacion", Width = 175, Height = 38,
-            BackColor = Color.FromArgb(30, 80, 120), ForeColor = Color.White,
-            FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 9, FontStyle.Bold)
-        };
-        btnAsignar.FlatAppearance.BorderSize = 0;
-        btnAsignar.Click += BtnAsignar_Click;
-
-        pnlBts.Controls.AddRange(new Control[] { btnDevolver, btnAsignar });
-        pnlDetalle.Controls.Add(pnlBts);
-        pnlDetalle.Controls.Add(layout);
-
         CargarCombos();
     }
 
-    private Panel CrearPanel(TableLayoutPanel layout, string etiqueta, int row)
+    private FlowLayoutPanel CrearPanel(TableLayoutPanel layout, string etiqueta, int row)
     {
-        var pnl = new Panel { Dock = DockStyle.Fill, Padding = new Padding(4) };
-        pnl.Controls.Add(new Label
+        var flow = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown,
+            WrapContents = false, Padding = new Padding(4, 4, 4, 2)
+        };
+        var lbl = new Label
         {
             Text = etiqueta, Font = new Font("Segoe UI", 9, FontStyle.Bold),
-            Dock = DockStyle.Top, Height = 22, ForeColor = Color.FromArgb(60, 80, 100)
-        });
-        layout.Controls.Add(pnl, 0, row);
-        return pnl;
+            ForeColor = Color.FromArgb(60, 80, 100), AutoSize = false, Height = 20, Width = 400
+        };
+        flow.Controls.Add(lbl);
+        flow.SizeChanged += (_, _) => { int w = flow.ClientSize.Width - 10; if (w > 0) lbl.Width = w; };
+        layout.Controls.Add(flow, 0, row);
+        return flow;
     }
 
     private void CargarCombos()
