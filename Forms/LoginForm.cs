@@ -141,6 +141,7 @@ public class LoginForm : Form
 
         AcceptButton = btnIngresar;
         txtUsuario.Text = "admin";
+        txtContrasena.Text = "Admin123!";
         txtContrasena.Focus();
     }
 
