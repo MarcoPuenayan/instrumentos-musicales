@@ -107,12 +107,6 @@ public class AsignacionInstrumentoForm : Form
         var pnlLista = split.Panel2;
         pnlLista.Padding = new Padding(10);
 
-        pnlLista.Controls.Add(new Label
-        {
-            Text = "Historial de Asignaciones", Font = new Font("Segoe UI", 14, FontStyle.Bold),
-            Dock = DockStyle.Top, Height = 40, ForeColor = Color.FromArgb(30, 80, 120)
-        });
-
         dgv = new DataGridView
         {
             Dock = DockStyle.Fill, ReadOnly = true, AllowUserToAddRows = false,
@@ -120,14 +114,19 @@ public class AsignacionInstrumentoForm : Form
             BackgroundColor = Color.White, BorderStyle = BorderStyle.None,
             AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill, RowHeadersVisible = false,
             Font = new Font("Segoe UI", 9),
-            ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+            ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing,
+            CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
+            GridColor = Color.FromArgb(225, 235, 245)
         };
-        dgv.ColumnHeadersHeight = 32;
+        dgv.ColumnHeadersHeight = 33;
         dgv.EnableHeadersVisualStyles = false;
         dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(30, 80, 120);
         dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
         dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
-        dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 249, 253);
+        dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(4, 0, 0, 0);
+        dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(246, 250, 254);
+        dgv.DefaultCellStyle.Padding = new Padding(4, 0, 0, 0);
+        dgv.RowTemplate.Height = 30;
         dgv.SelectionChanged += Dgv_SelectionChanged;
         dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = "Id", Visible = false });
         dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = "Instrumento", HeaderText = "Instrumento" });
@@ -135,7 +134,14 @@ public class AsignacionInstrumentoForm : Form
         dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = "FechaAsig", HeaderText = "Fecha Asignacion", FillWeight = 20 });
         dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = "FechaDev", HeaderText = "Fecha Devolucion", FillWeight = 20 });
         dgv.Columns.Add(new DataGridViewTextBoxColumn { Name = "Estado", HeaderText = "Estado", FillWeight = 15 });
+
+        // dgv se agrega PRIMERO (Fill), el titulo DESPUES (Top) para evitar solapamiento de cabeceras
         pnlLista.Controls.Add(dgv);
+        pnlLista.Controls.Add(new Label
+        {
+            Text = "Historial de Asignaciones", Font = new Font("Segoe UI", 13, FontStyle.Bold),
+            Dock = DockStyle.Top, Height = 40, ForeColor = Color.FromArgb(30, 80, 120)
+        });
 
         CargarCombos();
     }
